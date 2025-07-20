@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send, Mail, Phone, MapPin } from "lucide-react";
+import Image from "next/image";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -148,6 +149,19 @@ export default function ContactPage() {
                     <span>Remote, World</span>
                 </div>
               </CardContent>
+            </Card>
+            <Card className="shadow-lg shadow-primary/10 bg-card/80 backdrop-blur-sm border-primary/20 overflow-hidden">
+                <CardContent className="p-0">
+                    <div className="relative h-64 w-full">
+                        <Image 
+                            src="https://placehold.co/600x400.png"
+                            alt="Cybernetic connections"
+                            fill
+                            className="object-cover"
+                            data-ai-hint="futuristic abstract"
+                        />
+                    </div>
+                </CardContent>
             </Card>
           </div>
         </div>
