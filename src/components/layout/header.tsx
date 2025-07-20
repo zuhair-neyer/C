@@ -1,7 +1,7 @@
 import { CodeXml, Menu } from "lucide-react";
 import Link from "next/link";
 import { MainNav } from "./main-nav";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const MobileNav = () => (
@@ -16,6 +16,8 @@ const MobileNav = () => (
             </Button>
         </SheetTrigger>
         <SheetContent side="left">
+             <SheetTitle className="sr-only">Menu</SheetTitle>
+            <SheetDescription className="sr-only">Main navigation menu</SheetDescription>
             <Link href="/" className="flex items-center gap-2 font-bold text-lg mb-6">
                 <CodeXml className="h-6 w-6 text-primary" />
                 <span className="font-headline">CyberCraft Studio</span>
