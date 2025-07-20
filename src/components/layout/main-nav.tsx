@@ -14,13 +14,18 @@ const routes = [
 
 export function MainNav({
   className,
+  mobile = false,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: React.HTMLAttributes<HTMLElement> & { mobile?: boolean }) {
   const pathname = usePathname();
 
   return (
     <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      className={cn(
+        "flex items-center",
+        mobile ? "flex-col space-y-2 items-start" : "space-x-4 lg:space-x-6",
+        className
+      )}
       {...props}
     >
       {routes.map((route) => (
@@ -29,6 +34,7 @@ export function MainNav({
           href={route.href}
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
+            mobile && "text-lg w-full p-2 hover:bg-muted rounded-md",
             pathname === route.href
               ? "text-primary"
               : "text-muted-foreground"
