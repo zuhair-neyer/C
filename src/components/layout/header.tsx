@@ -1,8 +1,52 @@
-import { CodeXml, Menu } from "lucide-react";
+"use client";
+
+import { CodeXml, Menu, LogIn, UserPlus, LogOut } from "lucide-react";
 import Link from "next/link";
 import { MainNav } from "./main-nav";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+
+const AuthButtons = () => {
+    const { user, loading } = useAuth();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await signOut(auth);
+        router.push('/');
+    };
+
+    if (loading) {
+        return <div className="h-10 w-24 bg-muted/50 animate-pulse rounded-md" />;
+    }
+
+    if (user) {
+        return (
+            <Button onClick={handleLogout} variant="ghost">
+                <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+        );
+    }
+
+    return (
+        <div className="flex items-center gap-2">
+            <Button asChild variant="ghost">
+                <Link href="/login">
+                    <LogIn className="mr-2 h-4 w-4" /> Login
+                </Link>
+            </Button>
+            <Button asChild>
+                <Link href="/signup">
+                    <UserPlus className="mr-2 h-4 w-4" /> Sign Up
+                </Link>
+            </Button>
+        </div>
+    );
+};
+
 
 const MobileNav = () => (
     <Sheet>
@@ -43,6 +87,9 @@ export default function Header() {
         </Link>
         <div className="hidden md:flex flex-1">
             <MainNav />
+        </div>
+         <div className="flex items-center gap-2 ml-auto">
+            <AuthButtons />
         </div>
       </div>
     </header>
