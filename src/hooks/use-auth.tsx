@@ -30,11 +30,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    // auth and db are now initialized on the client, so this will work
-    if (!auth) {
-        setLoading(false);
-        return;
-    }
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {

@@ -12,20 +12,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
+// Initialize Firebase
 let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
-
-// Initialize Firebase on the client side
-if (typeof window !== 'undefined' && !getApps().length) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-} else if (getApps().length) {
-    app = getApp();
-    auth = getAuth(app);
-    db = getFirestore(app);
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
 }
+
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 // Export the initialized services
 export { app, auth, db };
