@@ -9,6 +9,7 @@ const allRoutes = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/order", label: "Order", auth: true },
+  { href: "/account", label: "My Account", auth: true },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact Us" },
 ];
@@ -31,7 +32,7 @@ export function MainNav({
   if (loading) {
     return (
         <div className={cn("flex items-center", mobile ? "flex-col space-y-2 items-start" : "space-x-4 lg:space-x-6", className)}>
-            {[...Array(4)].map((_, i) => (
+            {[...Array(5)].map((_, i) => (
                 <div key={i} className="h-6 w-20 bg-muted/50 animate-pulse rounded-md" />
             ))}
         </div>

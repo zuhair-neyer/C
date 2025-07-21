@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send, Mail, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/use-auth";
+import { sendContactMessageAction } from "../actions";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -28,7 +29,6 @@ export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { userProfile, loading } = useAuth();
-  const formTargetEmail = "zuhairmumtaz87@gmail.com";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -46,20 +46,29 @@ export default function ContactPage() {
   }, [userProfile, form]);
 
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
     setIsLoading(true);
     
-    const subject = `New Contact Message from ${values.name}`;
-    const body = `Name: ${values.name}%0D%0AEmail: ${values.email}%0D%0A%0D%0AMessage:%0D%0A${values.message}`;
-    const mailtoLink = `mailto:${formTargetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    window.location.href = mailtoLink;
-    
-    setIsLoading(false);
-    toast({
-        title: "📬 Opening Email Client",
-        description: "Please complete sending the message in your email application.",
-    });
+    try {
+        await sendContactMessageAction(values);
+        toast({
+            title: "📬 Message Sent!",
+            description: "Thank you for reaching out. We'll get back to you soon.",
+        });
+        form.reset();
+        if (userProfile) {
+          form.setValue('name', userProfile.fullName);
+          form.setValue('email', userProfile.email || '');
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "Failed to send message. Please try again later.",
+        });
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (
