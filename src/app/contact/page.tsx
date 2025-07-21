@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send, Mail, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from "@/hooks/use-auth";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -26,23 +27,39 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { userProfile, loading } = useAuth();
+  const formTargetEmail = "zuhairmumtaz87@gmail.com";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", email: "", message: "" },
   });
 
+  useEffect(() => {
+    if (userProfile) {
+      form.reset({
+        name: userProfile.fullName || "",
+        email: userProfile.email || "",
+        message: "",
+      });
+    }
+  }, [userProfile, form]);
+
+
   function onSubmit(values: FormValues) {
     setIsLoading(true);
-    console.log(values); // In a real app, you'd send this to a backend.
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "📬 Message Sent!",
-        description: "Thanks for reaching out! We'll get back to you soon.",
-      });
-      form.reset();
-    }, 1500);
+    
+    const subject = `New Contact Message from ${values.name}`;
+    const body = `Name: ${values.name}%0D%0AEmail: ${values.email}%0D%0A%0D%0AMessage:%0D%0A${values.message}`;
+    const mailtoLink = `mailto:${formTargetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailtoLink;
+    
+    setIsLoading(false);
+    toast({
+        title: "📬 Opening Email Client",
+        description: "Please complete sending the message in your email application.",
+    });
   }
 
   return (
@@ -113,11 +130,11 @@ export default function ContactPage() {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" disabled={isLoading} className="w-full">
+                    <Button type="submit" disabled={isLoading || loading} className="w-full">
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Sending...
+                          Submitting...
                         </>
                       ) : (
                         <>
